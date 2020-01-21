@@ -14,8 +14,8 @@ class GraphqlApi(Api):
         return response_data['data']
 
     def send_query(self, query, variables, headers):
-        domain = remove_trailing_slash(self.client.domain)
-        url = f'{domain}/graphql/'
+        url = remove_trailing_slash(self.client.url)
+        url = f'{url}/graphql/'
         auth_headers = {}
         if self.client.jwt:
             auth_headers['Authorization'] = f'Bearer {self.client.jwt}'

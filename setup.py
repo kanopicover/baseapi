@@ -10,7 +10,7 @@ setup(
     maintainer_email='furious.luke@gmail.com',
     description='Easily create maintainable API clients.',
     long_description='',
-    url='https://github.com/furious.luke/baseapi',
+    url='https://github.com/furious-luke/baseapi',
     license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',

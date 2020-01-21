@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture
 def client():
-    yield Client(domain='http://server:8000')
+    yield Client(url='http://server:8000')
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def auth_client():
         'VHDBuwaLnyRu2tAHOdZSAZfU'
     )
     yield Client(
-        domain='http://server:8000',
+        url='http://server:8000',
         encrypt=False,
         jwt=token
     )

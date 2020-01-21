@@ -8,8 +8,8 @@ class Client:
     DEFAULT_URL = None
     DEFAULT_APIS = ()
 
-    def __init__(self, domain=None, jwt=None):
-        self.domain = domain or self.DEFAULT_URL
+    def __init__(self, url=None, jwt=None):
+        self.url = url or self.DEFAULT_URL
         self.jwt = jwt
         self.apis = []
         self.load_apis()
