@@ -23,6 +23,7 @@ setup(
     maintainer_email='furious.luke@gmail.com',
     description='Easily create maintainable API clients.',
     long_description=read_file('./README.md'),
+    long_description_content_type='text/markdown',
     url='https://github.com/furious-luke/baseapi',
     license='MIT',
     classifiers=[
