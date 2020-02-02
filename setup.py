@@ -1,15 +1,28 @@
 from setuptools import find_packages, setup
-from baseapi import __version__
+
+
+def read_file(path):
+    with open(path) as f:
+        return f.read()
+
+
+# TODO: I would rather import this as opposed to parsing it, but when
+# importing during installation it breaks due to the __init__.py file
+# trying to load in other modules.
+def parse_version():
+    content = read_file('./baseapi/__version__.py')
+    return content.split('=')[1].strip()[1:-1]
+
 
 setup(
     name='base-api',
-    version=__version__,
+    version=parse_version(),
     author='Luke Hodkinson',
     author_email='furious.luke@gmail.com',
     maintainer='Luke Hodkinson',
     maintainer_email='furious.luke@gmail.com',
     description='Easily create maintainable API clients.',
-    long_description='',
+    long_description=read_file('./README.md'),
     url='https://github.com/furious-luke/baseapi',
     license='MIT',
     classifiers=[
