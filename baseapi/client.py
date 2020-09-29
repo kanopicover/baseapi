@@ -1,3 +1,4 @@
+import inspect
 from importlib import import_module
 
 from .apis import Api
@@ -29,12 +30,34 @@ class Client:
 
     def add_api(self, api):
         self.apis.append(api)
+        any_exposed = self._are_any_exposed(api)
+        for attr_name in dir(api):
+            attr = getattr(api, attr_name)
+            if any_exposed:
+                if getattr(attr, 'expose', False):
+                    self._expose_api_method(attr_name, attr)
+            else:
+                if self._should_expose(attr_name, attr, api):
+                    self._expose_api_method(attr_name, attr)
+
+    def set_jwt(self, jwt):
+        self.jwt = jwt
+
+    def _are_any_exposed(self, api):
         for attr_name in dir(api):
             attr = getattr(api, attr_name)
             if getattr(attr, 'expose', False):
-                self.expose_api_method(attr_name, attr)
+                return True
+        return False
 
-    def expose_api_method(self, name, method):
+    def _should_expose(self, attr_name, attr, api):
+        return (
+            attr_name[0] != '_'
+            and inspect.ismethod(attr)
+            and attr_name not in api.IGNORED_ATTRIBUTES
+        )
+
+    def _expose_api_method(self, name, method):
         if getattr(self, name, None) is not None:
             raise ClientException(f'Name already exists on client: {name}')
         setattr(self, name, method)

@@ -1,12 +1,18 @@
 import requests
 
 from ..exceptions import QueryException
-from ..utils import FileID, remove_trailing_slash
+from ..utils import remove_trailing_slash
 
 from .api import Api
 
 
 class GraphqlApi(Api):
+    IGNORED_ATTRIBUTES = Api.IGNORED_ATTRIBUTES | set([
+        'perform_query',
+        'send_query',
+        'check_for_errors',
+    ])
+
     def perform_query(self, query, variables=None, headers=None):
         response = self.send_query(query, variables, headers)
         response_data = response.json()
@@ -44,17 +50,3 @@ class GraphqlApi(Api):
             except Exception:
                 msg = 'unknown reason'
             raise QueryException(f'API error: {msg}')
-
-    def make_variables(self, **kwargs):
-        return {
-            key: value
-            for key, value in kwargs.items()
-            if value is not None
-        }
-
-    def check_file_id(self, file_id):
-        if file_id is not None:
-            if not isinstance(file_id, FileID):
-                raise TypeError('File uploads must be FileID objects')
-            file_id = str(file_id)
-        return file_id

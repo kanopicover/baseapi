@@ -54,15 +54,17 @@ from baseapi.apis import GraphqlApi
 
 
 class AuthApi(GraphqlApi):
-    @GraphqlAPI.expose_method
     def login(self, username, password):
-        # TODO
-        pass
+        login_query = '...'
+        data = {
+            'username': username,
+            'password': password
+        }
+        return self.perform_query(login_query, data)
 
-    @GraphqlAPI.expose_method
     def logout(self):
-        # TODO
-        pass
+        logout_query = '...'
+        return self.perform_query(logout_query)
 ```
 
 Once you have this slice of your API ready, you can add it to your
@@ -80,6 +82,53 @@ class MyClient(Client):
 ```
 
 In this case, `auth.py` must be placed in your `PYTHONPATH`, most
-likely alongside your client class file.
+likely alongside your client class file. Now, you may access the APIs
+methods on your client as such:
 
-TODO: More to come...
+```python
+client = MyClient()
+client.login('username', 'password')
+```
+
+There are currently two API types supported, GraphQL and Rest. The
+same `auth` API as above, but using Rest instead:
+
+``` python
+from baseapi.apis import RestApi
+
+
+class AuthApi(RestApi):
+    def login(self, username, password):
+        data = {
+            'username': username,
+            'password': password
+        }
+        return self.post('/login', data)
+
+    def logout(self):
+        return self.post('/logout')
+```
+
+### Exposing methods to the client
+
+The methods in an API that get exposed to a client are chosen based on
+a leading underscore. Those without an underscore are automatically
+added to the client class, while those with an underscore are treated
+as private.
+
+So, as an example, a local validation method could be added to an API
+as such:
+
+``` python
+from baseapi.apis import RestApi
+
+
+class MyApi(RestApi):
+    def get_something(self, type):
+        self._validate_type(type)
+        return self.get('/api/something, data={'type': type})
+
+    def _validate_type(self, type):
+        # Do validation.
+        pass
+```

@@ -1,6 +1,8 @@
+import pytest
+
 from baseapi.client import Client
 
-import pytest
+from .placeholder import PlaceholderClient
 
 
 @pytest.fixture
@@ -19,6 +21,10 @@ def auth_client():
     )
     yield Client(
         url='http://server:8000',
-        encrypt=False,
         jwt=token
     )
+
+
+@pytest.fixture
+def placeholder_client():
+    yield PlaceholderClient()
