@@ -1,8 +1,10 @@
 import os
+import json
 import requests
+from urllib.parse import urlencode
 
 from ..exceptions import QueryException
-from ..utils import remove_trailing_slash
+from ..utils import remove_trailing_slash, merge_headers
 
 from .api import Api
 
@@ -39,9 +41,34 @@ class RestApi(Api):
     def perform_request(self, method, path, data=None, headers=None):
         url = remove_trailing_slash(self.client.url)
         url = f'{url}{path}'
-        response = getattr(requests, method)(url, json=data, headers=headers)
+        auth_headers = {}
+        if self.client.jwt:
+            auth_headers['Authorization'] = f'Bearer {self.client.jwt}'
+        headers = {
+            **auth_headers,
+            **merge_headers(self.client.headers, headers),
+        }
+        if self.client.debug:
+            print(f'Request: {url} ({method})')
+            print('  Headers:')
+            print(f'    {json.dumps(headers, indent=6)}')
+            print('  Data:')
+            print(f'    {json.dumps(data, indent=6)}')
+        if method == 'get':
+            url = f'{url}?{urlencode(data)}'
+            data = None
+        response = getattr(requests, method)(
+            url,
+            json=data,
+            headers=headers,
+        )
         if response.status_code not in self.SUCCESS_RESPONSE_CODES:
             msg = response.content
-            raise QueryException(f'API error: {msg}')
+            raise QueryException(
+                f'API error: {msg}',
+                status_code=response.status_code,
+                body=response.content,
+                headers=response.headers,
+            )
         response_data = response.json()
         return response_data

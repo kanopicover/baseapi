@@ -22,3 +22,10 @@ def make_timestamp(value):
     if value:
         value = value.isoformat()
     return value
+
+
+def merge_headers(a, b):
+    headers = {**(a or {}), **(b or {})}
+    if not headers:
+        return None
+    return headers

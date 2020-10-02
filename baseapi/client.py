@@ -9,11 +9,16 @@ class Client:
     DEFAULT_URL = None
     DEFAULT_APIS = ()
 
-    def __init__(self, url=None, jwt=None):
+    def __init__(self, url=None, jwt=None, session=None):
         self.url = url or self.DEFAULT_URL
         self.jwt = jwt
         self.apis = []
+        self.headers = {}
+        self.session = session
         self.load_apis()
+        if self.session:
+            self.session.load(self)
+        self.debug = False
 
     def load_apis(self):
         for api_name in self.DEFAULT_APIS:
@@ -42,6 +47,11 @@ class Client:
 
     def set_jwt(self, jwt):
         self.jwt = jwt
+        if self.session:
+            self.session.save(self)
+
+    def is_authenticated(self):
+        return bool(self.jwt)
 
     def _are_any_exposed(self, api):
         for attr_name in dir(api):
