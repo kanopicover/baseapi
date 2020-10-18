@@ -27,5 +27,5 @@ def make_timestamp(value):
 def merge_headers(a, b):
     headers = {**(a or {}), **(b or {})}
     if not headers:
-        return None
+        return {}
     return headers
