@@ -32,7 +32,7 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.5',
         'License :: OSI Approved :: MIT License'
     ],
     packages=find_packages(exclude=['tests']),
