@@ -41,7 +41,7 @@ def assert_status_hook(response, *args, **kwargs):
     response.raise_for_status()
 
 
-def logging_hook(request, *args, **kwargs):
+def logging_hook(response, *args, **kwargs):
     """Log the request if logging is enabled."""
     if kwargs["debug"]:
         data = dump.dump_all(response)
