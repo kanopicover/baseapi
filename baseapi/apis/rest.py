@@ -40,7 +40,7 @@ def assert_status_hook(response, *args, **kwargs):
     """Raise an error for any requests that have failed."""
     if not response.ok:
         raise QueryException(
-            f'API error: {msg}',
+            f'API error: {response.content}',
             status_code=response.status_code,
             body=response.content,
             headers=response.headers,
