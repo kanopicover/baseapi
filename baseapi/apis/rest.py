@@ -38,7 +38,13 @@ class TimeoutHTTPAdapter(HTTPAdapter):
 
 def assert_status_hook(response, *args, **kwargs):
     """Raise an error for any requests that have failed."""
-    response.raise_for_status()
+    if not response.ok:
+        raise QueryException(
+            f'API error: {msg}',
+            status_code=response.status_code,
+            body=response.content,
+            headers=response.headers,
+        )
 
 
 def logging_hook(response, *args, **kwargs):
