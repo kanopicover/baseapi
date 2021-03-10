@@ -76,7 +76,7 @@ class RestApi(Api):
         """
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
-        self.session.hooks["response"] = [assert_status_hook, partial(logging_hook, debug=self.client.debug)]
+        self.session.hooks["response"] = [partial(logging_hook, debug=self.client.debug), assert_status_hook]
         self.session.mount("http://", TimeoutHTTPAdapter(max_retries=retries))
         self.session.mount("https://", TimeoutHTTPAdapter(max_retries=retries))
 
