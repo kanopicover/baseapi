@@ -64,6 +64,7 @@ class RestApi(Api):
         'options',
         'perform_request',
     ])
+    api_timeout = DEFAULT_TIMEOUT
 
     def __init__(self, *args, **kwargs):
         """
@@ -75,30 +76,34 @@ class RestApi(Api):
         See also: https://findwork.dev/blog/advanced-usage-python-requests-timeouts-retries-hooks/
         """
         super().__init__(*args, **kwargs)
+        self.timeout_adapter = TimeoutHTTPAdapter(
+            max_retries=retries,
+            timeout=self.api_timeout,
+        )
         self.session = requests.Session()
         self.session.hooks["response"] = [partial(logging_hook, debug=self.client.debug), assert_status_hook]
-        self.session.mount("http://", TimeoutHTTPAdapter(max_retries=retries))
-        self.session.mount("https://", TimeoutHTTPAdapter(max_retries=retries))
+        self.session.mount("http://", self.timeout_adapter)
+        self.session.mount("https://", self.timeout_adapter)
 
-    def get(self, path, data=None, headers=None):
-        return self.perform_request('get', path, data=data, headers=headers)
+    def get(self, path, data=None, headers=None, timeout=None):
+        return self.perform_request('get', path, data=data, headers=headers, timeout=timeout)
 
-    def post(self, path, data=None, headers=None):
-        return self.perform_request('post', path, data=data, headers=headers)
+    def post(self, path, data=None, headers=None, timeout=None):
+        return self.perform_request('post', path, data=data, headers=headers, timeout=timeout)
 
-    def put(self, path, data=None, headers=None):
-        return self.perform_request('put', path, data=data, headers=headers)
+    def put(self, path, data=None, headers=None, timeout=None):
+        return self.perform_request('put', path, data=data, headers=headers, timeout=timeout)
 
-    def patch(self, path, data=None, headers=None):
-        return self.perform_request('patch', path, data=data, headers=headers)
+    def patch(self, path, data=None, headers=None, timeout=None):
+        return self.perform_request('patch', path, data=data, headers=headers, timeout=timeout)
 
-    def delete(self, path, data=None, headers=None):
-        return self.perform_request('delete', path, data=data, headers=headers)
+    def delete(self, path, data=None, headers=None, timeout=None):
+        return self.perform_request('delete', path, data=data, headers=headers, timeout=timeout)
 
-    def options(self, path, data=None, headers=None):
-        return self.perform_request('options', path, data=data, headers=headers)
+    def options(self, path, data=None, headers=None, timeout=None):
+        return self.perform_request('options', path, data=data, headers=headers, timeout=timeout)
 
-    def perform_request(self, method, path, data=None, headers=None):
+    def perform_request(self, method, path, data=None, headers=None, timeout=None):
         url = remove_trailing_slash(self.client.url)
         url = f'{url}{path}'
         auth_headers = {}
@@ -117,4 +122,5 @@ class RestApi(Api):
             url,
             json=data,
             headers=headers,
+            timeout=timeout,
         ).json()
