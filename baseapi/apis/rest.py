@@ -1,3 +1,4 @@
+import logging
 import os
 import json
 import requests
@@ -12,6 +13,7 @@ from ..utils import remove_trailing_slash, merge_headers
 
 from .api import Api
 
+logger = logging.getLogger(__name__)
 DEFAULT_TIMEOUT = 5
 retries = Retry(
     total=3,
@@ -51,7 +53,7 @@ def logging_hook(response, *args, **kwargs):
     """Log the request if logging is enabled."""
     if kwargs["debug"]:
         data = dump.dump_all(response)
-        print(data.decode('utf-8'))
+        log.debug(data.decode('utf-8'))
 
 
 class RestApi(Api):
