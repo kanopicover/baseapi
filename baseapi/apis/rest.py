@@ -53,7 +53,7 @@ def logging_hook(response, *args, **kwargs):
     """Log the request if logging is enabled."""
     if kwargs["debug"]:
         data = dump.dump_all(response)
-        log.debug(data.decode('utf-8'))
+        logger.debug(data.decode('utf-8'))
 
 
 class RestApi(Api):
