@@ -25,7 +25,7 @@ class Client:
             module = import_module(api_name)
             for cls in module.__dict__.values():
                 if self.is_valid_api(cls):
-                    self.add_api(cls(self))
+                    self.add_api(cls(client=self))
 
     def is_valid_api(self, cls):
         try:
