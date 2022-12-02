@@ -14,7 +14,7 @@ from ..utils import remove_trailing_slash, merge_headers
 from .api import Api
 
 logger = logging.getLogger(__name__)
-DEFAULT_TIMEOUT = 5
+DEFAULT_TIMEOUT = 15
 DEFAULT_RETRIES = Retry(
     total=3,
     backoff_factor=1,
