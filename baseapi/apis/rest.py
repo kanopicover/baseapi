@@ -14,12 +14,12 @@ from ..utils import remove_trailing_slash, merge_headers
 from .api import Api
 
 logger = logging.getLogger(__name__)
-DEFAULT_TIMEOUT = 5
-retries = Retry(
+DEFAULT_TIMEOUT = 15
+DEFAULT_RETRIES = Retry(
     total=3,
     backoff_factor=1,
     status_forcelist=[429, 500, 502, 503, 504],
-    method_whitelist=["HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS", "TRACE"],
+    allowed_methods=["HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS", "TRACE"],
 )
 
 
@@ -68,6 +68,19 @@ class RestApi(Api):
     ])
     api_timeout = DEFAULT_TIMEOUT
 
+    """
+    Values for retries can be:
+        * ``None``, to retry until you receive a response.
+        * :class:`~urllib3.util.retry.Retry` object, for fine-grained control over
+          different types of retries.
+        * integer number, to retry connection errors that many times, but not on other
+          types of errors. Pass zero to never retry.
+        * ``False``, retries are disabled and any exception is raised immediately. Also,
+          instead of raising a MaxRetryError on redirects, the redirect response will be
+          returned.
+    """
+    api_retries = DEFAULT_RETRIES
+
     def __init__(self, *args, **kwargs):
         """
         Create a requests session to send HTTP requests with.
@@ -79,7 +92,7 @@ class RestApi(Api):
         """
         super().__init__(*args, **kwargs)
         self.timeout_adapter = TimeoutHTTPAdapter(
-            max_retries=retries,
+            max_retries=self.api_retries,
             timeout=self.api_timeout,
         )
         self.session = requests.Session()
