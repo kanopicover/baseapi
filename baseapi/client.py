@@ -41,7 +41,7 @@ class Client:
         for attr_name in dir(api):
             attr = getattr(api, attr_name)
             if any_exposed:
-                if getattr(attr, 'expose', False):
+                if getattr(attr, "expose", False):
                     self._expose_api_method(attr_name, attr)
             else:
                 if self._should_expose(attr_name, attr, api):
@@ -58,18 +58,18 @@ class Client:
     def _are_any_exposed(self, api):
         for attr_name in dir(api):
             attr = getattr(api, attr_name)
-            if getattr(attr, 'expose', False):
+            if getattr(attr, "expose", False):
                 return True
         return False
 
     def _should_expose(self, attr_name, attr, api):
         return (
-            attr_name[0] != '_'
+            attr_name[0] != "_"
             and inspect.ismethod(attr)
             and attr_name not in api.IGNORED_ATTRIBUTES
         )
 
     def _expose_api_method(self, name, method):
         if getattr(self, name, None) is not None:
-            raise ClientException(f'Name already exists on client: {name}')
+            raise ClientException(f"Name already exists on client: {name}")
         setattr(self, name, method)

@@ -13,7 +13,7 @@ class FileID:
 
 
 def remove_trailing_slash(path):
-    if path and path[-1] == '/':
+    if path and path[-1] == "/":
         path = path[:-1]
     return path
 
