@@ -1,4 +1,5 @@
 import inspect
+import logging
 from importlib import import_module
 
 from .apis import Api
@@ -16,6 +17,7 @@ class Client:
         self.apis = []
         self.headers = {}
         self.session = session
+        self.logger = logging.getLogger("baseapi")
         self.load_apis()
         if self.session:
             self.session.load(self)
